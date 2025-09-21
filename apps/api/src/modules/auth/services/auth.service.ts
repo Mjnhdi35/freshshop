@@ -57,6 +57,10 @@ export class AuthService {
     return this.usersService.findOne(userId);
   }
 
+  async updateProfile(userId: string, updateUserDto: any) {
+    return this.usersService.update(userId, updateUserDto);
+  }
+
   private async generateTokens(user: any) {
     const payload = JwtUtil.createPayload(user);
 
@@ -85,6 +89,7 @@ export class AuthService {
         id: user.id,
         email: user.email,
         name: user.name,
+        role: user.role,
         isActive: user.isActive,
       },
     };

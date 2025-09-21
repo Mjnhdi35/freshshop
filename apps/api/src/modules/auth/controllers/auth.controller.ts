@@ -3,6 +3,7 @@ import {
   Post,
   Body,
   Get,
+  Patch,
   Request,
   Res,
   UnauthorizedException,
@@ -12,6 +13,7 @@ import { Response } from 'express';
 import { AuthService } from '../services/auth.service';
 import { LoginDto } from '../dto/login.dto';
 import { RegisterDto } from '../dto/register.dto';
+import { UpdateUserDto } from '../../users/dto/update-user.dto';
 import { CookieUtil } from '../../../utils/cookie.util';
 import { Public } from '../../../decorators/public.decorator';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
@@ -110,6 +112,20 @@ export class AuthController {
     return {
       success: true,
       message: 'Profile retrieved successfully',
+      data: { user },
+    };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('profile')
+  async updateProfile(@Body() updateUserDto: UpdateUserDto, @Request() req) {
+    const user = await this.authService.updateProfile(
+      req.user.id,
+      updateUserDto,
+    );
+    return {
+      success: true,
+      message: 'Profile updated successfully',
       data: { user },
     };
   }

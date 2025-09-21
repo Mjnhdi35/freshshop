@@ -16,13 +16,15 @@ export class JwtUtil {
   /**
    * Create JWT payload
    */
-  static createPayload(user: { id: string; email: string }): {
+  static createPayload(user: { id: string; email: string; role: string }): {
     email: string;
     sub: string;
+    role: string;
   } {
     return {
       email: user.email,
       sub: user.id,
+      role: user.role,
     };
   }
 }
