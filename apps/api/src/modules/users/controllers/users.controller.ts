@@ -1,43 +1,32 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Patch,
   Param,
-  Delete,
+  UseGuards,
+  Request,
+  ForbiddenException,
 } from '@nestjs/common';
 import { UsersService } from '../services/users.service';
-import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
-import { UserResponseDto } from '../dto/user-response.dto';
+import { UpdateRoleDto } from '../dto/update-role.dto';
+import { Roles } from '../../../decorators/roles.decorator';
+import { RolesGuard } from '../../../guards/roles.guard';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  async create(@Body() createUserDto: CreateUserDto) {
-    const user = await this.usersService.create(createUserDto);
-    return {
-      success: true,
-      message: 'User created successfully',
-      data: { user },
-    };
-  }
-
-  @Get()
-  async findAll() {
-    const users = await this.usersService.findAll();
-    return {
-      success: true,
-      message: 'Users retrieved successfully',
-      data: { users },
-    };
-  }
-
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  @UseGuards(RolesGuard)
+  @Roles('admin', 'customer')
+  async findOne(@Param('id') id: string, @Request() req) {
+    // Only allow users to view their own profile
+    if (req.user.id !== id) {
+      throw new ForbiddenException('You can only view your own profile');
+    }
+
     const user = await this.usersService.findOne(id);
     return {
       success: true,
@@ -47,7 +36,18 @@ export class UsersController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  @UseGuards(RolesGuard)
+  @Roles('admin', 'customer')
+  async update(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @Request() req,
+  ) {
+    // Only allow users to update their own profile
+    if (req.user.id !== id) {
+      throw new ForbiddenException('You can only update your own profile');
+    }
+
     const user = await this.usersService.update(id, updateUserDto);
     return {
       success: true,
@@ -56,12 +56,19 @@ export class UsersController {
     };
   }
 
-  @Delete(':id')
-  async remove(@Param('id') id: string) {
-    await this.usersService.remove(id);
+  // Admin only: Update user role
+  @Patch(':id/role')
+  @UseGuards(RolesGuard)
+  @Roles('admin')
+  async updateUserRole(
+    @Param('id') id: string,
+    @Body() updateRoleDto: UpdateRoleDto,
+  ) {
+    const user = await this.usersService.updateRole(id, updateRoleDto.role);
     return {
       success: true,
-      message: 'User deleted successfully',
+      message: 'User role updated successfully',
+      data: { user },
     };
   }
 }

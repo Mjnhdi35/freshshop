@@ -1,8 +1,8 @@
-export class UserResponseDto {
+export class CategoryResponseDto {
   id: string;
-  email: string;
   name: string;
-  role: 'admin' | 'customer';
+  description: string;
+  image: string;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
