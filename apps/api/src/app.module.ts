@@ -2,8 +2,10 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { getDatabaseConfig } from './config/database.config';
-import { createRedisClient } from './config/redis.config';
-import { RedisService } from './services/redis.service';
+import { UsersModule } from './modules/users/users.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { RedisModule } from './modules/redis/redis.module';
+import { JwtGlobalGuard } from './guards/jwt-global.guard';
 
 @Module({
   imports: [
@@ -16,16 +18,16 @@ import { RedisService } from './services/redis.service';
       useFactory: getDatabaseConfig,
       inject: [ConfigService],
     }),
+    RedisModule,
+    UsersModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [
     {
-      provide: 'REDIS_CLIENT',
-      useFactory: (configService: ConfigService) =>
-        createRedisClient(configService),
-      inject: [ConfigService],
+      provide: 'APP_GUARD',
+      useClass: JwtGlobalGuard,
     },
-    RedisService,
   ],
 })
 export class AppModule {}
