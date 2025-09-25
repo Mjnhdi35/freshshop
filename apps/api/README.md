@@ -1,38 +1,38 @@
 # Fresh Shop API
 
-A modern, scalable e-commerce API built with NestJS, TypeORM, PostgreSQL, and Redis. This API provides comprehensive functionality for an online shopping platform including user management, product catalog, shopping cart, and content management.
+API thương mại điện tử hiện đại trên NestJS, TypeORM, PostgreSQL và Redis. Cung cấp đầy đủ chức năng: người dùng, sản phẩm, giỏ hàng, nội dung.
 
-## 🌟 Overview
+## 🌟 Tổng quan
 
-Fresh Shop API is designed with enterprise-grade architecture, following clean code principles and modern development practices. It provides a robust foundation for building scalable e-commerce applications with comprehensive security, performance optimization, and developer-friendly features.
+Thiết kế theo kiến trúc doanh nghiệp, clean code và thực hành hiện đại. Nền tảng vững chắc để mở rộng với bảo mật, hiệu năng và trải nghiệm dev tốt.
 
-## 🚀 Tech Stack
+## 🚀 Công nghệ
 
 ### Core Framework
 
-- **NestJS 11.x**: Enterprise-grade Node.js framework with TypeScript
-- **TypeScript 5.7**: Strong typing and modern JavaScript features
-- **Express**: HTTP server foundation
+- **NestJS 11.x**: Framework Node.js với TypeScript
+- **TypeScript 5.7**: Kiểu mạnh và tính năng hiện đại
+- **Express**: Nền tảng HTTP
 
 ### Database & ORM
 
-- **PostgreSQL**: Primary relational database (Neon cloud)
-- **TypeORM 0.3.27**: Advanced Object-Relational Mapping with lazy loading
-- **Redis (Upstash)**: Distributed caching and session storage
+- **PostgreSQL**: CSDL quan hệ (Neon)
+- **TypeORM 0.3.27**: ORM với lazy loading
+- **Redis (Upstash)**: Cache phân tán và session
 
-### Authentication & Security
+### Xác thực & Bảo mật
 
-- **JWT**: Stateless authentication with refresh tokens
-- **bcrypt**: Password hashing with configurable salt rounds
-- **Passport.js**: Authentication strategies
-- **class-validator**: Input validation and sanitization
+- **JWT**: Xác thực stateless với refresh token
+- **bcrypt**: Hash mật khẩu (salt rounds cấu hình)
+- **Passport.js**: Chiến lược xác thực
+- **class-validator**: Validate & sanitize input
 
-### Development Tools
+### Công cụ phát triển
 
-- **ESLint**: Code linting with TypeScript rules
-- **Prettier**: Code formatting
-- **Jest**: Unit and integration testing
-- **Hot Reload**: Development server with watch mode
+- **ESLint**: Lint TypeScript
+- **Prettier**: Định dạng code
+- **Jest**: Unit & integration test
+- **Hot Reload**: Watch mode
 
 ## 📁 Project Structure
 

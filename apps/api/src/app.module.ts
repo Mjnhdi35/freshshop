@@ -10,6 +10,7 @@ import { ProductsModule } from './modules/products/products.module';
 import { PostsModule } from './modules/posts/posts.module';
 import { CartModule } from './modules/cart/cart.module';
 import { JwtGlobalGuard } from './guards/jwt-global.guard';
+import { HealthModule } from './modules/health/health.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { JwtGlobalGuard } from './guards/jwt-global.guard';
     ProductsModule,
     PostsModule,
     CartModule,
+    HealthModule,
   ],
   controllers: [],
   providers: [

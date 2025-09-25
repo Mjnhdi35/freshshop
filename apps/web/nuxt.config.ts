@@ -10,6 +10,11 @@ export default defineNuxtConfig({
     "@nuxtjs/tailwindcss",
   ],
 
+  // Auto-import components without directory prefix in names
+  components: {
+    dirs: [{ path: "~/components", pathPrefix: false }],
+  },
+
   // API Configuration
   runtimeConfig: {
     public: {
@@ -43,9 +48,33 @@ export default defineNuxtConfig({
       meta: [
         { charset: "utf-8" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
-        { name: "description", content: "Modern e-commerce platform" },
+        {
+          name: "description",
+          content: "Nền tảng thương mại điện tử hiện đại",
+        },
+        { name: "theme-color", content: "#0ea5e9" },
+        { name: "robots", content: "index,follow" },
+        { property: "og:type", content: "website" },
+        { property: "og:site_name", content: "Fresh Shop" },
       ],
-      link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
+      htmlAttrs: { lang: "vi" },
+      link: [
+        { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+        { rel: "preconnect", href: "https://fonts.googleapis.com" },
+        {
+          rel: "preconnect",
+          href: "https://fonts.gstatic.com",
+          crossorigin: "",
+        },
+      ],
+    },
+  },
+  nitro: {
+    routeRules: {
+      "/": { swr: 60 },
+      "/products": { swr: 60 },
+      "/products/**": { swr: 60 },
+      "/api/**": { cache: false },
     },
   },
 });

@@ -3,6 +3,11 @@
     :ui="headerUi"
     class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-200"
   >
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-white text-blue-600 px-3 py-2 rounded"
+      >Bỏ qua nội dung điều hướng</a
+    >
     <!-- Left Section -->
     <template #left>
       <div class="flex items-center gap-4">
@@ -45,6 +50,17 @@
             @search="handleSearch"
           />
         </div>
+
+        <!-- Dark Mode Toggle -->
+        <UButton
+          variant="ghost"
+          color="gray"
+          size="sm"
+          :icon="
+            colorMode.value === 'dark' ? 'i-heroicons-moon' : 'i-heroicons-sun'
+          "
+          @click="toggleColorMode"
+        />
 
         <!-- Cart -->
         <UButton
@@ -262,6 +278,12 @@ const handleSearch = (query: string) => {
 const handleNotifications = () => {
   // Handle notifications
   console.log("Open notifications");
+};
+
+// Color mode
+const colorMode = useColorMode();
+const toggleColorMode = () => {
+  colorMode.preference = colorMode.value === "dark" ? "light" : "dark";
 };
 
 const toggleMobileMenu = () => {

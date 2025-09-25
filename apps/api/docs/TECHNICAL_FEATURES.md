@@ -1,10 +1,10 @@
-# Fresh Shop API - Technical Features Documentation
+# Fresh Shop API - Tính năng kỹ thuật
 
-## 🏗️ Architecture Overview
+## 🏗️ Tổng quan kiến trúc
 
 Fresh Shop API is a modern, scalable e-commerce backend built with NestJS framework, following clean architecture principles and enterprise-grade patterns.
 
-### Core Architecture Components
+### Thành phần kiến trúc
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -41,7 +41,7 @@ Fresh Shop API is a modern, scalable e-commerce backend built with NestJS framew
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## 🔧 Technical Stack
+## 🔧 Công nghệ
 
 ### Backend Framework
 
@@ -55,13 +55,13 @@ Fresh Shop API is a modern, scalable e-commerce backend built with NestJS framew
 - **TypeORM 0.3.27**: Object-Relational Mapping with advanced features
 - **Entity Relationships**: Proper foreign keys and constraints
 
-### Caching & Session Management
+### Bộ nhớ đệm & Phiên
 
 - **Redis (Upstash)**: Distributed caching and session storage
 - **JWT Tokens**: Stateless authentication
 - **Refresh Token Strategy**: Enhanced security
 
-### Security & Validation
+### Bảo mật & Kiểm tra dữ liệu
 
 - **bcrypt**: Password hashing with configurable salt rounds
 - **class-validator**: Input validation and sanitization
@@ -69,7 +69,7 @@ Fresh Shop API is a modern, scalable e-commerce backend built with NestJS framew
 - **CORS**: Cross-origin resource sharing
 - **HttpOnly Cookies**: Secure token storage
 
-## 🗄️ Database Schema & Entities
+## 🗄️ Lược đồ & Entities
 
 ### Entity Relationships with Lazy Loading
 
@@ -196,7 +196,7 @@ export class Post {
 }
 ```
 
-## 🔐 Security Features
+## 🔐 Bảo mật
 
 ### Authentication & Authorization
 
@@ -219,7 +219,7 @@ export class Post {
 - **XSS Protection**: Input sanitization and validation
 - **CORS Configuration**: Controlled cross-origin access
 
-## 🚀 Performance Optimizations
+## 🚀 Tối ưu hiệu năng
 
 ### Database Optimizations
 
@@ -240,7 +240,7 @@ export class Post {
 - **Data Transformation**: Automatic DTO transformation
 - **Error Handling**: Centralized exception filtering
 
-## 🛠️ Development Features
+## 🛠️ Hỗ trợ phát triển
 
 ### Code Quality
 
@@ -256,7 +256,7 @@ export class Post {
 - **Environment Configuration**: Flexible environment management
 - **Database Synchronization**: Auto-sync in development
 
-## 📊 API Features
+## 📊 Tính năng API
 
 ### RESTful Design
 
@@ -279,7 +279,7 @@ export class Post {
 - **Validation Pipe**: Global input validation
 - **Cookie Parser**: HTTP-only cookie support
 
-## 🔧 Configuration Management
+## 🔧 Quản lý cấu hình
 
 ### Environment Variables
 
@@ -295,7 +295,7 @@ export class Post {
 - **Logging**: Query logging in development
 - **Entity Auto-loading**: Automatic entity discovery
 
-## 📈 Scalability Features
+## 📈 Khả năng mở rộng
 
 ### Horizontal Scaling
 
@@ -311,7 +311,7 @@ export class Post {
 - **Performance Metrics**: Response time tracking
 - **Health Checks**: Application health monitoring
 
-## 🔄 Data Flow Architecture
+## 🔄 Luồng dữ liệu
 
 ### Request Processing Pipeline
 
@@ -337,7 +337,14 @@ Service Method → Repository → TypeORM → PostgreSQL
 Lazy Loading → Relationship Resolution → Data Transformation → Response
 ```
 
-## 🧪 Testing Strategy
+## 🧪 Chiến lược kiểm thử
+
+### Giải thích nguyên lý (DI, IoC, Loose/Tight Coupling)
+
+- DI (Dependency Injection): Truyền phụ thuộc vào class qua constructor/provider → giảm phụ thuộc cứng (tight coupling).
+- IoC (Inversion of Control): Container kiểm soát vòng đời & cung cấp phụ thuộc, code chỉ định interface/contract.
+- Loose Coupling: Thành phần có thể thay thế/test dễ vì chỉ phụ thuộc interface, không phụ thuộc implementation cụ thể.
+- Tight Coupling: Thành phần gắn chặt implementation → khó test/thay thế.
 
 ### Test Configuration
 

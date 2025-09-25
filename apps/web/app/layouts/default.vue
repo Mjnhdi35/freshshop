@@ -4,7 +4,7 @@
     <Header />
 
     <!-- Main Content -->
-    <main class="flex-1">
+    <main id="main" class="flex-1">
       <slot />
     </main>
 
