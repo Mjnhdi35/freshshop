@@ -1,75 +1,63 @@
-# Nuxt Minimal Starter
+## Fresh Shop Web (Nuxt 4)
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Giao diện cửa hàng viết bằng Nuxt 4, Pinia, Nuxt UI và Tailwind CSS.
 
-## Setup
+### Công nghệ
 
-Make sure to install dependencies:
+- Nuxt 4, Vue 3, Pinia
+- Nuxt UI, Tailwind CSS v4
+- Server routes nội bộ `app/server/api` (mock data)
+
+### Yêu cầu
+
+- Node.js 18+
+
+### Cài đặt
 
 ```bash
-# npm
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
+### Biến môi trường
 
-Start the development server on `http://localhost:3000`:
+Tạo `.env` (hoặc export env) để trỏ tới API (nếu dùng API bên ngoài):
 
 ```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
+# dùng bởi runtimeConfig.public.apiBase
+API_BASE_URL=http://localhost:3000/api/v1
 ```
 
-## Production
-
-Build the application for production:
+### Scripts
 
 ```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
+npm run dev       # chạy dev server
+npm run build     # build production
+npm run preview   # preview sau khi build
+npm run generate  # prerender (SSG)
 ```
 
-Locally preview production build:
+### Cấu trúc
+
+- `app/components` — UI, layout, forms, product components
+- `app/pages` — routes (products, cart, auth, v.v.)
+- `app/stores` — Pinia stores (`products`, `cart`, `wishlist`)
+- `app/composables` — `useApi`, `useAuth`, `useProducts`, `useCart`
+- `app/server/api` — mock product endpoints
+- `app/assets/css/main.css` — Tailwind entry
+- `nuxt.config.ts` — modules, runtime config
+
+### State & Composables
+
+Xem `apps/web/docs/STATE_AND_COMPOSABLES.md`.
+
+### Tailwind
+
+Cấu hình qua `@nuxtjs/tailwindcss` (Tailwind v4).
+
+### Triển khai
+
+Build và chạy Node server:
 
 ```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
+npm run build && npm run preview
 ```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.

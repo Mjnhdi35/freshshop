@@ -1,8 +1,8 @@
-# Architecture Documentation
+# Tài liệu Kiến trúc
 
-## System Overview
+## Tổng quan hệ thống
 
-Fresh Shop API is built using a modular, scalable architecture with clear separation of concerns.
+Fresh Shop API xây dựng theo kiến trúc mô-đun, dễ mở rộng với phân tách trách nhiệm rõ ràng.
 
 ## Architecture Diagram
 
@@ -55,27 +55,29 @@ Fresh Shop API is built using a modular, scalable architecture with clear separa
                     └───────────────────────────┘
 ```
 
-## Core Components
+## Thành phần lõi
 
-### 1. Application Layer
+### 1. Lớp Ứng dụng (Application Layer)
 
-#### Global Guards
+#### Global Guards (DI/IoC)
 
-- **JwtGlobalGuard**: Protects all endpoints by default
-- **PublicGuard**: Checks for @Public() decorator to bypass JWT
+- **JwtGlobalGuard**: Bảo vệ tất cả endpoints theo mặc định
+- **PublicGuard**: Kiểm tra decorator `@Public()` để bỏ qua JWT
+
+Giải thích DI/IoC: NestJS dùng Dependency Injection (DI) và Inversion of Control (IoC) để khởi tạo và cung cấp phụ thuộc (services, guards) thông qua container. Điều này giảm tight coupling (phụ thuộc cứng) và tăng loose coupling (phụ thuộc lỏng), giúp test/dễ thay thế implementation.
 
 #### Controllers
 
 - **AuthController**: Handles authentication endpoints
 - **UsersController**: Handles user management endpoints
 
-### 2. Business Logic Layer
+### 2. Lớp Nghiệp vụ (Business Logic Layer)
 
 #### Services
 
-- **AuthService**: Authentication and authorization logic
-- **UsersService**: User management business logic
-- **RedisService**: Cache operations
+- **AuthService**: Xử lý xác thực/ủy quyền
+- **UsersService**: Nghiệp vụ người dùng
+- **RedisService**: Tác vụ cache
 
 #### Utils
 
@@ -84,31 +86,31 @@ Fresh Shop API is built using a modular, scalable architecture with clear separa
 - **TimeUtil**: Time and expiry calculations
 - **CookieUtil**: Cookie management
 
-### 3. Data Access Layer
+### 3. Lớp Truy cập Dữ liệu (Data Access Layer)
 
 #### Entities
 
-- **User**: User entity with TypeORM decorators
+- **User**: Entity người dùng (TypeORM decorators)
 
 #### Repositories
 
 - TypeORM repositories for database operations
 
-### 4. Infrastructure Layer
+### 4. Lớp Hạ tầng (Infrastructure Layer)
 
 #### Database
 
-- **PostgreSQL (Neon)**: Primary database
-- **Redis (Upstash)**: Caching and session storage
+- **PostgreSQL (Neon)**: CSDL chính
+- **Redis (Upstash)**: Cache & session
 
 #### Configuration
 
 - **Environment Variables**: Application configuration
 - **TypeORM Config**: Database connection settings
 
-## Security Architecture
+## Kiến trúc Bảo mật
 
-### Authentication Flow
+### Luồng xác thực
 
 ```
 1. User Login
@@ -132,7 +134,7 @@ Fresh Shop API is built using a modular, scalable architecture with clear separa
    └── Update cookie
 ```
 
-### Security Features
+### Tính năng bảo mật
 
 #### JWT Security
 
