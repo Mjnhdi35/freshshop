@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { ResponseInterceptor } from './interceptors/response.interceptor';
+import { MetricsInterceptor } from './interceptors/metrics.interceptor';
 import { AllExceptionsFilter } from './filters/all-exceptions.filter';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
@@ -10,9 +11,14 @@ import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { WinstonModule } from 'nest-winston';
+import { winstonOptions } from './logger/winston.config';
+import { requestIdMiddleware } from './middlewares/request-id.middleware';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: WinstonModule.createLogger(winstonOptions),
+  });
   const configService = app.get(ConfigService);
   app.setGlobalPrefix('api/v1');
 
@@ -28,14 +34,20 @@ async function bootstrap() {
     }),
   );
 
-  // Global response interceptor
-  app.useGlobalInterceptors(new ResponseInterceptor());
+  // Global response + metrics interceptors
+  app.useGlobalInterceptors(
+    new ResponseInterceptor(),
+    new MetricsInterceptor(),
+  );
 
   // Global exception filter
   app.useGlobalFilters(new AllExceptionsFilter());
 
   // Enable cookie parser
   app.use(cookieParser());
+
+  // Attach request-id middleware
+  app.use(requestIdMiddleware);
 
   // Security & performance middlewares
   app.use(helmet());

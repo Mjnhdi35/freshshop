@@ -44,6 +44,8 @@
     "rxjs": "^7.8.1",
     "helmet": "^7.1.0",
     "express-rate-limit": "^7.4.0",
+    "nest-winston": "^1.10.0",
+    "winston": "^3.13.0",
     "@nestjs/swagger": "^11.0.2",
     "swagger-ui-express": "^5.0.1",
     "typeorm": "^0.3.27"

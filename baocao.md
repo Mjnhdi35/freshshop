@@ -218,13 +218,22 @@ Xây dựng nền tảng e‑commerce hiện đại, production-ready với ki�
 
 ### 3.1.2. Thành phần hệ thống
 
-**Backend API**: NestJS 11 với TypeORM, PostgreSQL, Redis, JWT authentication, role-based access control.
+**Kiến trúc Monorepo Monolith**: Một repository chứa nhiều ứng dụng nhưng backend hiện tại là một monolith NestJS, frontend là một ứng dụng Nuxt 4.
 
-**Frontend Web**: Nuxt 4 với Pinia, Tailwind CSS, responsive design, SEO optimization.
+**Backend API**: NestJS 11 monolith (modules bên trong) với TypeORM, PostgreSQL, Redis, JWT authentication, role-based access control.
+
+**Frontend Web**: Nuxt 4 SPA/SSR với Pinia, Tailwind CSS, responsive design, SEO optimization.
 
 **Database**: PostgreSQL 15 (Neon cloud) cho dữ liệu chính, Redis (Upstash) cho caching và sessions.
 
 **Infrastructure**: Docker containerization, Nginx reverse proxy, PM2 process management.
+
+**Lý do chọn Monorepo Monolith**:
+
+- Giảm độ phức tạp vận hành: một repo, một quy trình build/deploy
+- Dễ tái lập và triển khai: Docker Compose đơn giản, shared configs
+- Tối ưu developer experience: hot reload, shared types, unified tooling
+- Sẵn sàng mở rộng: có thể tách thành microservices khi cần thiết
 
 ### 3.1.3. Đặc điểm kỹ thuật
 
@@ -486,6 +495,10 @@ CATEGORIES (id PK, name UK, ...)
 ### 3.2.3. Thiết kế ứng dụng
 
 #### 3.2.3.1. Backend Architecture Design
+
+**Monolith Architecture với Modular Design**:
+
+Dự án áp dụng kiến trúc monolith nhưng được tổ chức theo modules để dễ bảo trì và mở rộng. Mỗi module (auth, users, products, categories, cart, posts) là một bounded context độc lập.
 
 **Clean Architecture Implementation**:
 
@@ -906,6 +919,15 @@ CATEGORIES (id PK, name UK, ...)
 
 ## 3.3. Đối chiếu kiến trúc ↔ triển khai
 
+**Monorepo Monolith Architecture**:
+
+- Cấu trúc: `fresh_shop/apps/{api,web}` - một repo chứa nhiều app
+- Backend: NestJS monolith với modules (auth, users, products, categories, cart, posts)
+- Frontend: Nuxt 4 SPA/SSR độc lập
+- Shared: Docker Compose, environment configs, documentation
+
+**Technical Implementation**:
+
 - DI/IoC: NestJS container hoạt động qua metadata decorators; minh chứng ở guards, controllers, modules.
 - Loose coupling: Service/Repository tách biệt; utils thuần chức năng; modules độc lập.
 - Response format chuẩn: `interceptors/response.interceptor.ts` áp dụng toàn cục.
@@ -991,7 +1013,18 @@ Chưa tích hợp thanh toán thực, chưa có trang quản trị nâng cao, qu
 
 ## 4.3. Hướng phát triển sản phẩm thực tập
 
-Tích hợp thanh toán (Stripe), upload ảnh + CDN, admin dashboard, email thông báo, i18n, CI/CD, quan sát (Sentry/Grafana/Prometheus), tối ưu tìm kiếm (full‑text, gợi ý), và nâng cấp hệ thống khuyến nghị sản phẩm.
+**Giai đoạn 1 (Monolith Enhancement)**:
+
+- Tích hợp thanh toán (Stripe), upload ảnh + CDN, admin dashboard
+- Email thông báo, i18n, CI/CD, quan sát (Sentry/Grafana/Prometheus)
+- Tối ưu tìm kiếm (full‑text, gợi ý), hệ thống khuyến nghị sản phẩm
+
+**Giai đoạn 2 (Microservices Migration)**:
+
+- Tách modules thành microservices độc lập (auth-service, product-service, order-service)
+- Message queue (RabbitMQ/Redis) cho async processing
+- API Gateway (Kong/Nginx) cho service discovery và load balancing
+- Container orchestration (Kubernetes) cho production scale
 
 ## 4.4. Bài học kinh nghiệm
 
@@ -1284,3 +1317,94 @@ Tham khảo mẫu `docs/env/api.env.example.txt` và `docs/env/web.env.example.t
 - [x] Redis lưu refresh token
 - [x] Lazy loading entities TypeORM
 - [x] SEO/Perf/A11y trên Nuxt (meta/OG, SWR, preconnect, skip‑link)
+
+---
+
+# Phụ lục E. THUẬT TOÁN & KỸ THUẬT (GIẢI THÍCH TỰ NHIÊN + VÍ DỤ)
+
+## E.1. Thuật toán/kỹ thuật và “vì sao/như thế nào”
+
+- **Phân trang offset (page/limit)**: Dễ hiểu, phù hợp danh sách vừa/nhỏ. API nhận `page`, `limit`; DB dùng `OFFSET/LIMIT`. Nhược điểm là trượt trang khi dữ liệu thay đổi nhanh — chấp nhận được ở phạm vi hiện tại. Dùng kèm index ở cột sắp xếp (thường là `createdAt`).
+- **Lọc/sắp xếp có chỉ mục**: Lọc theo `categoryId`, `isActive`, `isFeatured` và sắp theo `createdAt`/`price`. Tạo index tương ứng để đảm bảo truy vấn < 500ms cho 95% request.
+- **Hash mật khẩu (bcrypt)**: Hash + salt rounds (ENV) chống rainbow table; có thể tăng rounds khi hạ tầng mạnh hơn. File: `utils/crypto.util.ts`.
+- **JWT + refresh token**: Access sống ngắn, refresh sống dài; lưu refresh ở Redis (TTL) để thu hồi/rotate. Tránh lưu token trên FE bằng Cookies HttpOnly (giảm XSS). Files: `auth.service.ts`, `cookie.util.ts`, `redis.service.ts`.
+- **Cookies an toàn + CORS**: `HttpOnly`, `Secure` (prod), `SameSite: 'strict'` chặn XSS/CSRF; CORS từ `CORS_ORIGIN` cho phép đúng domain. File: `src/main.ts`, `utils/cookie.util.ts`.
+- **SWR (stale‑while‑revalidate)**: Người dùng xem trang nhanh từ cache, nền đồng bộ dữ liệu mới. Nuxt Nitro `routeRules` áp dụng cho `/`, `/products`, `/products/**`. File: `apps/web/nuxt.config.ts`.
+- **Lazy loading quan hệ (TypeORM)**: Chỉ truy vấn khi thực sự cần — giảm IO/CPU. Thấy ở quan hệ User–Posts/CartItems, Category–Products, Product–CartItems. Files: `src/entities/*.ts`.
+- **Rate‑limit + Helmet**: Chặn flood/abuse và thêm security headers mặc định (HSTS, X‑Frame‑Options, XSS). File: `src/main.ts`.
+- **Validation strict (class‑validator)**: `whitelist`, `forbidNonWhitelisted`, `transform` — loại dữ liệu thừa, ép kiểu an toàn. Khả năng khai thác giảm đáng kể. File: `src/main.ts`.
+- **Response interceptor**: Chuẩn hoá JSON trả về để FE code đơn giản, logging nhất quán. File: `interceptors/response.interceptor.ts`.
+
+Tư duy phát triển (ngôn ngữ tự nhiên): ưu tiên “mặc định an toàn”, “rõ ràng hơn khôn ngoan”, “nhanh trước (SWR), đúng sau (revalidate)”, “giới hạn rõ ràng” (RBAC, rate‑limit, CORS). Tất cả được phản ánh trực tiếp trong cấu hình và mã.
+
+## E.2. Endpoint ↔ Controller/Service ↔ Quyền (rút gọn)
+
+| Endpoint       | Method | Controller → Service                                     | Quyền                          |
+| -------------- | ------ | -------------------------------------------------------- | ------------------------------ |
+| /auth/register | POST   | `AuthController.register` → `AuthService.register`       | Public                         |
+| /auth/login    | POST   | `AuthController.login` → `AuthService.login`             | Public                         |
+| /auth/refresh  | POST   | `AuthController.refresh` → `AuthService.refreshToken`    | Public (cookie bắt buộc)       |
+| /auth/logout   | POST   | `AuthController.logout` → `AuthService.logout`           | Public (cookie bắt buộc)       |
+| /auth/profile  | GET    | `AuthController.getProfile` → `AuthService.getProfile`   | Authenticated                  |
+| /products      | GET    | `ProductsController.findAll` → `ProductsService.findAll` | Public                         |
+| /products/:id  | GET    | `ProductsController.findOne` → `ProductsService.findOne` | Public                         |
+| /products      | POST   | `ProductsController.create` → `ProductsService.create`   | Admin                          |
+| /cart          | GET    | `CartController.getCart` → `CartService.getCart`         | Authenticated (customer/admin) |
+| /cart/add      | POST   | `CartController.addToCart` → `CartService.addToCart`     | Authenticated (customer/admin) |
+| /posts         | GET    | `PostsController.findAll` → `PostsService.findAll`       | Public                         |
+| /posts/:id     | GET    | `PostsController.findOne` → `PostsService.findOne`       | Public                         |
+
+## E.3. Ví dụ request/response (chuẩn hoá)
+
+Đăng nhập (Request):
+
+```json
+{
+  "email": "user@example.com",
+  "password": "Password123!"
+}
+```
+
+Đăng nhập (Response – đã chuẩn hoá):
+
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "user": {
+      "id": "uuid",
+      "email": "user@example.com",
+      "name": "John Doe",
+      "role": "customer",
+      "isActive": true
+    }
+  },
+  "timestamp": "2024-01-01T00:00:00.000Z",
+  "statusCode": 200
+}
+```
+
+Giỏ hàng (Response – rút gọn):
+
+```json
+{
+  "success": true,
+  "message": "Cart retrieved successfully",
+  "data": {
+    "cart": {
+      "items": [
+        {
+          "id": "uuid",
+          "product": { "id": "uuid", "name": "Product Name", "price": 99000 },
+          "quantity": 2
+        }
+      ],
+      "totalItems": 2,
+      "totalPrice": 198000
+    }
+  },
+  "timestamp": "2024-01-01T00:00:00.000Z",
+  "statusCode": 200
+}
+```
